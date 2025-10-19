@@ -128,22 +128,21 @@ pip install -r requirements.txt
 
 Create a .env file in the root directory and add:
 
-# Flask
-PORT=5000
-APP_BASE_URL=https://<your-ngrok-subdomain>.ngrok.io
+- ngrok
+PUBLIC_BASE_URL=https://<your-ngrok-subdomain>.ngrok.io
 
-# Twilio
+- Twilio
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TWILIO_NUMBER=+1XXXXXXXXXX
+TWILIO_PHONE_NUMBER=+1XXXXXXXXXX
 
-# OpenAI
+- OpenAI
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
 
-# Google Sheets
-GOOGLE_SERVICE_ACCOUNT_JSON=./gsa.json
-SHEET_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-SHEET_NAME=Orders
+- Google Sheets
+GOOGLE_SERVICE_ACCOUNT_JSON='.json' file location (downloaded via Google Console)
+ORDERS_SHEET_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ORDERS_SHEET_NAME=Sheet1
 
 ### 4️⃣ Start Ngrok
 

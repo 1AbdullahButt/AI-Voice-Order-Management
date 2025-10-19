@@ -1,0 +1,8 @@
+openai
+whisper
+pydub
+python-dotenv
+Flask
+twilio
+gspread[oauth]
+requests

@@ -63,7 +63,6 @@ AI-Voice-Order-Management/
 ├── .env.example
 ├── .gitignore
 ├── LICENSE
-└── archive/                 # (Optional) parked legacy files
 
 ```
 ---

@@ -53,20 +53,21 @@ Google Sheets Update
 ## 🗂 Project Structure
 
 AI-Voice-Order-Management/
-├── app.py # Main Flask server
-├── services/
-│ ├── twilio_client.py # Twilio API wrappers
-│ ├── openai_client.py # Whisper + GPT logic
-│ ├── sheets_client.py # Read/write Google Sheets
-├── utils/
-│ ├── helper.py # Utility functions
-│ └── prompts.py # GPT system prompts
-├── templates/
-│ └── twiml.xml # Twilio responses
-├── requirements.txt
-├── .env.example
-├── README.md
-└── gsa.json # Google Service Account (ignored)
+├── audio/ # Folder for storing recorded call audio
+├── data/ # Local storage or logs for testing
+├── action_handler.py # Handles user intent actions (confirm/update)
+├── call_from_sheet.py # Reads new orders from Google Sheets and triggers calls
+├── call_handler.py # Manages Twilio call flow (initiate, gather, hangup)
+├── flask_server.py # Flask app that exposes webhooks for Twilio
+├── intent.py # GPT-based intent extraction logic
+├── main.py # Entry point for local testing
+├── response.py # Twilio TwiML responses for speech and confirmation
+├── transcribe.py # Whisper STT transcription handler
+├── requirements.txt # Project dependencies
+├── README.md # Project documentation
+├── .env.example # Environment variable template
+├── .gitignore # Ignored files and folders
+└── LICENSE # License information
 
 
 

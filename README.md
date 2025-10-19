@@ -163,8 +163,9 @@ Copy the https://<id>.ngrok.io URL and set it as APP_BASE_URL in .env
 
 4. Trigger calls
 
-  - From code (poll-based):
-    python call_from_sheet.py
+Open another terminal window while Flask + ngrok are running, then execute:
+
+python call_from_sheet.py
 
   - This will scan for rows where status=NEW and dial them.
 ---

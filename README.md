@@ -52,18 +52,20 @@ Google Sheets Update
 
 ## 🗂 Project Structure
 
+```text
 AI-Voice-Order-Management/
-├── flask_server.py # Flask app: Twilio webhooks + routing
-├── call_from_sheet.py # Polls/reads Google Sheets and triggers calls
-├── intent.py # (If used) GPT-4o intent extraction
-├── transcribe.py # (If used) Whisper STT helper
+├── flask_server.py          # Flask app: Twilio webhooks + routing
+├── call_from_sheet.py       # Polls/reads Google Sheets and triggers calls
+├── intent.py                # (If used) GPT-4o intent extraction
+├── transcribe.py            # (If used) Whisper STT helper
 ├── requirements.txt
 ├── README.md
 ├── .env.example
 ├── .gitignore
 ├── LICENSE
-└── archive/ # (Optional) parked legacy files
+└── archive/                 # (Optional) parked legacy files
 
+```
 ---
 
 ## 📄 Order Sheet Schema & Call Rules (Used by `call_from_sheet.py`)

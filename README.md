@@ -64,21 +64,17 @@ AI-Voice-Order-Management/
 ├── LICENSE
 └── archive/ # (Optional) parked legacy files
 
-
----
-
-
 ---
 
 ## 📄 Order Sheet Schema & Call Rules
 
 Create a Google Sheet (name can be anything) and share it with your **service account email** (Editor). Recommended columns:
 
-| Col | Field              | Type      | Example                                 |
+| Col | Field              | Type      | Example                                  |
 |-----|--------------------|-----------|------------------------------------------|
 | A   | `id`               | string    | `ORD-1023`                               |
-| B   | `customer_name`    | string    | `Ali Khan`                               |
-| C   | `phone`            | e164 str  | `+923001234567`                          |
+| B   | `customer_name`    | string    | `XXXXXXXX`                               |
+| C   | `phone`            | e164 str  | `+XXXXXXXXXXXX`                          |
 | D   | `order_text`       | string    | `2x beef burgers, 1x fries`              |
 | E   | `status`           | enum      | `NEW` / `CALLED` / `CONFIRMED` / `UPDATED` / `FAILED` |
 | F   | `final_order_json` | json str  | `{"action":"confirm","items":[...]}`     |
@@ -95,6 +91,7 @@ Create a Google Sheet (name can be anything) and share it with your **service ac
   - On error/no answer: set `status=FAILED`, clear `locked_at`.
 - Re-runner logic: rows with `FAILED` can be retried manually; `CALLED` rows shouldn’t be re-dialed unless you reset them to `NEW`.
 
+- Share the sheet with your Google Service Account email (Editor).
 ---
 
 ## 🧠 Workflow Breakdown
@@ -129,59 +126,45 @@ pip install -r requirements.txt
 Create a .env file in the root directory and add:
 
 - ngrok
-PUBLIC_BASE_URL=https://<your-ngrok-subdomain>.ngrok.io
+  - PUBLIC_BASE_URL=https://<your-ngrok-subdomain>.ngrok.io
 
 - Twilio
-TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TWILIO_PHONE_NUMBER=+1XXXXXXXXXX
+  - TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  - TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  - TWILIO_PHONE_NUMBER=+1XXXXXXXXXX
 
 - OpenAI
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
+  - OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
 
 - Google Sheets
-GOOGLE_SERVICE_ACCOUNT_JSON='.json' file location (downloaded via Google Console)
-ORDERS_SHEET_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-ORDERS_SHEET_NAME=Sheet1
+  - GOOGLE_SERVICE_ACCOUNT_JSON='.json' file location (downloaded via Google Console)
+  - ORDERS_SHEET_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  - ORDERS_SHEET_NAME=Sheet1
 
-### 4️⃣ Start Ngrok
+### ▶️ Exact Run Order (no guesswork)
+
+1. Start Flask server
+   
+python flask_server.py
+
+2. Expose with ngrok
 
 ngrok http 5000
-Copy the HTTPS forwarding URL and update it under APP_BASE_URL.
 
-### 5️⃣ Run Flask App
-python app.py
+Copy the https://<id>.ngrok.io URL and set it as APP_BASE_URL in .env
 
----
+3. Set Twilio webhooks (Console → Phone Numbers → Active Number → Voice):
 
-📞 Twilio Setup
+  - Voice Webhook (POST): https://<ngrok>.ngrok.io/voice/incoming
 
-Go to Twilio Console → Phone Numbers → Active Number → Voice Settings
+  - Status Callback (POST): https://<ngrok>.ngrok.io/voice/status
 
-Set:
+4. Trigger calls
 
-- Voice Webhook (POST): https://<your-ngrok>.ngrok.io/voice/incoming
-- Status Callback (POST): https://<your-ngrok>.ngrok.io/voice/status
+  - From code (poll-based):
+    python call_from_sheet.py
 
----
-
-🧾 Google Sheets Setup
-
-Create a Google Sheet titled Orders with columns:
-
-| Column | Name             | Description                        |
-| ------ | ---------------- | ---------------------------------- |
-| A      | ID               | Unique order ID                    |
-| B      | Customer Name    | Name of customer                   |
-| C      | Phone            | Twilio-callable number             |
-| D      | Order Details    | e.g., “2x Burgers, 1x Fries”       |
-| E      | Status           | NEW / CALLED / CONFIRMED / UPDATED |
-| F      | Final Order JSON | GPT’s structured output            |
-| G      | Notes            | System remarks                     |
-| H      | Last Updated     | Timestamp                          |
-
-Share the sheet with your Google Service Account email (Editor).
-
+  - This will scan for rows where status=NEW and dial them.
 ---
 
 🧭 API Endpoints

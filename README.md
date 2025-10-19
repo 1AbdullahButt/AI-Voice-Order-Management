@@ -67,25 +67,56 @@ AI-Voice-Order-Management/
 
 ---
 
+
+---
+
+## 📄 Order Sheet Schema & Call Rules
+
+Create a Google Sheet (name can be anything) and share it with your **service account email** (Editor). Recommended columns:
+
+| Col | Field              | Type      | Example                                 |
+|-----|--------------------|-----------|------------------------------------------|
+| A   | `id`               | string    | `ORD-1023`                               |
+| B   | `customer_name`    | string    | `Ali Khan`                               |
+| C   | `phone`            | e164 str  | `+923001234567`                          |
+| D   | `order_text`       | string    | `2x beef burgers, 1x fries`              |
+| E   | `status`           | enum      | `NEW` / `CALLED` / `CONFIRMED` / `UPDATED` / `FAILED` |
+| F   | `final_order_json` | json str  | `{"action":"confirm","items":[...]}`     |
+| G   | `notes`            | string    | `no onions`                              |
+| H   | `locked_at`        | datetime  | `2025-07-28T18:20:11Z`                   |
+| I   | `last_updated`     | datetime  | `2025-07-28T18:22:30Z`                   |
+
+**Call Rules (idempotent):**
+- **Call only when** `status == NEW` **and** `locked_at` is empty.  
+- When a worker picks a row, immediately set `locked_at=now()` and `status=CALLED` (prevents double-call).  
+- After call + NLP:
+  - On success **confirm**: set `status=CONFIRMED`, write `final_order_json`, update `last_updated`.
+  - On success **modify**: set `status=UPDATED`, write `final_order_json`, update `last_updated`.
+  - On error/no answer: set `status=FAILED`, clear `locked_at`.
+- Re-runner logic: rows with `FAILED` can be retried manually; `CALLED` rows shouldn’t be re-dialed unless you reset them to `NEW`.
+
+---
+
 ## 🧠 Workflow Breakdown
 
 | Step | Action | Tool |
-|------|--------|------|
-| 1 | New order detected in Google Sheets | Google Sheets API |
+|-----:|--------|------|
+| 1 | Detect new order (`status=NEW`) | Google Sheets API |
 | 2 | Outbound call to customer | Twilio |
-| 3 | Customer speaks (confirm/change order) | Twilio Recording |
-| 4 | Voice converted to text | Whisper |
-| 5 | Text analyzed for intent | GPT-4o |
-| 6 | Google Sheet updated | Sheets API |
+| 3 | Customer speaks (confirm/change) | Twilio Recording |
+| 4 | Convert speech → text | Whisper |
+| 5 | Interpret intent & normalize JSON | GPT-4o |
+| 6 | Update row (status + JSON + timestamps) | Sheets API |
 
 ---
 
 ## 🧰 Setup Guide
 
-### 1️⃣ Clone the Repo
+### 1) Clone
 
 git clone https://github.com/<your-username>/AI-Voice-Order-Management.git
 cd AI-Voice-Order-Management
+
 
 ### 2️⃣ Install Dependencies
 

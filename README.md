@@ -179,11 +179,6 @@ Copy the https://<id>.ngrok.io URL and set it as APP_BASE_URL in .env
 | `/voice/status`   | POST   | Optional Twilio call status callback   |
 | `/health`         | GET    | Test endpoint                          |
 
-Example Test
-
-curl -X POST https://<your-ngrok>.ngrok.io/orders/call \
-  -H "Content-Type: application/json" \
-  -d '{"row_id": "2"}'
 
 ---
 
@@ -213,8 +208,6 @@ You can deploy on Render, Railway, or Fly.io:
 
 - Add all .env variables
 
-- Add Procfile → web: python app.py
-
 - Update Twilio webhook URLs with the deployed domain
 
 ---
@@ -232,8 +225,9 @@ You can deploy on Render, Railway, or Fly.io:
 ---
 
 🧩 Example Call Flow
-
+```text
 Bot: “Hi John, I’m calling to confirm your order of 2 beef burgers and 1 fries. Would you like to confirm or make changes?”
 User: “Make it 3 burgers instead.”
 Bot: “Got it. Updated your order to 3 beef burgers and 1 fries. Thank you!”
 → Sheet updates automatically.
+```

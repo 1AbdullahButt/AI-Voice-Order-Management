@@ -53,22 +53,16 @@ Google Sheets Update
 ## 🗂 Project Structure
 
 AI-Voice-Order-Management/
-├── audio/ # Folder for storing recorded call audio
-├── data/ # Local storage or logs for testing
-├── action_handler.py # Handles user intent actions (confirm/update)
-├── call_from_sheet.py # Reads new orders from Google Sheets and triggers calls
-├── call_handler.py # Manages Twilio call flow (initiate, gather, hangup)
-├── flask_server.py # Flask app that exposes webhooks for Twilio
-├── intent.py # GPT-based intent extraction logic
-├── main.py # Entry point for local testing
-├── response.py # Twilio TwiML responses for speech and confirmation
-├── transcribe.py # Whisper STT transcription handler
-├── requirements.txt # Project dependencies
-├── README.md # Project documentation
-├── .env.example # Environment variable template
-├── .gitignore # Ignored files and folders
-└── LICENSE # License information
-
+├── flask_server.py # Flask app: Twilio webhooks + routing
+├── call_from_sheet.py # Polls/reads Google Sheets and triggers calls
+├── intent.py # (If used) GPT-4o intent extraction
+├── transcribe.py # (If used) Whisper STT helper
+├── requirements.txt
+├── README.md
+├── .env.example
+├── .gitignore
+├── LICENSE
+└── archive/ # (Optional) parked legacy files
 
 
 ---

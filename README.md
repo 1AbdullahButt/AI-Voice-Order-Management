@@ -14,7 +14,7 @@ This project simulates a restaurant or retail business that uses **AI-powered vo
 3. The customer confirms or requests changes through voice  
 4. **Whisper** transcribes the audio  
 5. **GPT-4o** interprets the intent  
-6. **Google Sheets API** updates the sheet automatically — no typing required  
+6. **Google Sheets API** updates the sheet automatically. NO TYPING REQUIRED  
 
 ---
 

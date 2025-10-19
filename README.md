@@ -147,13 +147,13 @@ Create a .env file in the root directory and add:
 
 1. Start Flask server
    
-python flask_server.py
+    python flask_server.py
 
 2. Expose with ngrok
 
-ngrok http 5000
+    ngrok http 5000
 
-Copy the https://<id>.ngrok.io URL and set it as APP_BASE_URL in .env
+    Copy the https://<id>.ngrok.io URL and set it as APP_BASE_URL in .env
 
 3. Set Twilio webhooks (Console → Phone Numbers → Active Number → Voice):
 
@@ -163,9 +163,9 @@ Copy the https://<id>.ngrok.io URL and set it as APP_BASE_URL in .env
 
 4. Trigger calls
 
-Open another terminal window while Flask + ngrok are running, then execute:
+    Open another terminal window while Flask + ngrok are running, then execute:
 
-python call_from_sheet.py
+    python call_from_sheet.py
 
   - This will scan for rows where status=NEW and dial them.
 ---

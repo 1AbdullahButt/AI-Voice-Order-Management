@@ -66,32 +66,33 @@ AI-Voice-Order-Management/
 
 ---
 
-## 📄 Order Sheet Schema & Call Rules
+## 📄 Order Sheet Schema & Call Rules (Used by `call_from_sheet.py`)
 
-Create a Google Sheet (name can be anything) and share it with your **service account email** (Editor). Recommended columns:
+Create a Google Sheet (name can be anything) and share it with your **service account email** (Editor).
 
-| Col | Field              | Type      | Example                                  |
-|-----|--------------------|-----------|------------------------------------------|
-| A   | `id`               | string    | `ORD-1023`                               |
-| B   | `customer_name`    | string    | `XXXXXXXX`                               |
-| C   | `phone`            | e164 str  | `+XXXXXXXXXXXX`                          |
-| D   | `order_text`       | string    | `2x beef burgers, 1x fries`              |
-| E   | `status`           | enum      | `NEW` / `CALLED` / `CONFIRMED` / `UPDATED` / `FAILED` |
-| F   | `final_order_json` | json str  | `{"action":"confirm","items":[...]}`     |
-| G   | `notes`            | string    | `no onions`                              |
-| H   | `locked_at`        | datetime  | `2025-07-28T18:20:11Z`                   |
-| I   | `last_updated`     | datetime  | `2025-07-28T18:22:30Z`                   |
+Your sheet should have **these exact columns** in this order:
 
-**Call Rules (idempotent):**
-- **Call only when** `status == NEW` **and** `locked_at` is empty.  
-- When a worker picks a row, immediately set `locked_at=now()` and `status=CALLED` (prevents double-call).  
-- After call + NLP:
-  - On success **confirm**: set `status=CONFIRMED`, write `final_order_json`, update `last_updated`.
-  - On success **modify**: set `status=UPDATED`, write `final_order_json`, update `last_updated`.
-  - On error/no answer: set `status=FAILED`, clear `locked_at`.
-- Re-runner logic: rows with `FAILED` can be retried manually; `CALLED` rows shouldn’t be re-dialed unless you reset them to `NEW`.
+| Column | Header           | Description |
+|---------|------------------|--------------|
+| A | **Order ID** | Unique ID for each order (e.g., ORD-101) |
+| B | **Name** | Customer name |
+| C | **Phone** | Customer’s phone number in E.164 format (e.g., +xxxxxx) |
+| D | **Original Order** | The original order text added by the restaurant (e.g., “2x Burgers, 1x Fries”) |
+| E | **Status** | Tracks call progress — must be one of `NEW`, `CALLED`, `CONFIRMED`, or `UPDATED` |
+| F | **Call** | Internal marker used to record if a call was made successfully |
+| G | **Updated Order** | The final updated order text or JSON response returned by GPT |
 
-- Share the sheet with your Google Service Account email (Editor).
+### 🧩 Sheet Logic
+
+- A **call is made** only when `Status` = `NEW`.  
+- Once the call starts, the bot immediately updates the row:
+  - Sets **Status → CALLED** to prevent duplicate calls.
+- After user response and GPT processing:
+  - If order confirmed → `Status → CONFIRMED`
+  - If changes requested → `Status → UPDATED`
+  - The updated order is written to **Updated Order** column.
+- Rows marked `CALLED`, `CONFIRMED`, or `UPDATED` **will not be called again** unless manually changed back to `NEW`.
+
 ---
 
 ## 🧠 Workflow Breakdown
